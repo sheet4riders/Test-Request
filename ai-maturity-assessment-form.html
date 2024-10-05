@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluez la maturité IA de votre entreprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question {
+            display: none;
+            margin-bottom: 20px;
+        }
+        .question.active {
+            display: block;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #results {
+            display: none;
+            text-align: center;
+        }
+        #score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        #interpretation {
+            margin-bottom: 20px;
+        }
+        #recommendations {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .by-line {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 14px;
+            color: #000;
+        }
+        .contact-info {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .contact-info a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="by-line">By <a href="https://www.decisionsandco.com/" target="_blank">Décisions & Co</a></div>
+        <h1>Évaluez la maturité IA de votre entreprise</h1>
+        <div id="questionnaire"></div>
+        <button id="next">Suivant</button>
+        <div id="results">
+            <h2>Résultats de votre évaluation</h2>
+            <div id="score"></div>
+            <div id="interpretation"></div>
+            <div id="recommendations"></div>
+            <div class="contact-info">
+                Décisions & Co est le partenaire de confiance des entreprises désireuses d'intégrer l'IA au cœur de leurs organisations.
+                <br><br>
+                <a href="mailto:contact@decisionsandco.com">📧 contact@decisionsandco.com</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: "Quelle est la place de l'IA dans la stratégie de votre entreprise ?",
+                answers: [
+                    "L'IA n'est pas considérée comme stratégique",
+                    "L'IA est mentionnée dans notre stratégie, mais sans plan concret",
+                    "Nous avons une stratégie IA définie, mais pas encore pleinement mise en œuvre",
+                    "L'IA est au cœur de notre stratégie d'entreprise et est activement mise en œuvre"
+                ]
+            },
+            {
+                question: "Quel est le niveau de compétences en IA au sein de votre entreprise ?",
+                answers: [
+                    "Nous n'avons pas de compétences en IA en interne",
+                    "Quelques employés ont des connaissances de base en IA",
+                    "Nous avons une équipe dédiée à l'IA avec des compétences variées",
+                    "Nous disposons d'experts en IA reconnus dans l'industrie"
+                ]
+            },
+            {
+                question: "Comment l'IA est-elle intégrée dans vos processus métier ?",
+                answers: [
+                    "L'IA n'est pas utilisée dans nos processus",
+                    "Nous expérimentons l'IA dans quelques processus non critiques",
+                    "L'IA est intégrée dans plusieurs processus importants",
+                    "L'IA est omniprésente et optimise la plupart de nos processus clés"
+                ]
+            },
+            {
+                question: "Quel est le niveau d'investissement de votre entreprise en IA ?",
+                answers: [
+                    "Aucun investissement spécifique en IA",
+                    "Investissements ponctuels pour des projets pilotes",
+                    "Budget dédié à l'IA, en croissance",
+                    "Investissements stratégiques importants en IA"
+                ]
+            },
+            {
+                question: "Comment gérez-vous les données nécessaires aux projets d'IA ?",
+                answers: [
+                    "Nous n'avons pas de gestion spécifique des données pour l'IA",
+                    "Nous commençons à collecter et organiser nos données pour l'IA",
+                    "Nous avons une infrastructure de données solide pour l'IA",
+                    "Nous avons une gouvernance des données avancée, optimisée pour l'IA"
+                ]
+            },
+            {
+                question: "Quelle est votre approche en matière d'éthique et de responsabilité de l'IA ?",
+                answers: [
+                    "Nous n'avons pas encore abordé ces questions",
+                    "Nous sommes conscients des enjeux mais sans politique formelle",
+                    "Nous avons des lignes directrices éthiques pour nos projets IA",
+                    "Nous avons un cadre éthique robuste et participons activement aux discussions sur l'IA responsable"
+                ]
+            },
+            {
+                question: "Comment mesurez-vous l'impact de l'IA sur votre entreprise ?",
+                answers: [
+                    "Nous ne mesurons pas l'impact de l'IA",
+                    "Nous suivons quelques métriques de base pour les projets IA",
+                    "Nous avons des KPI définis pour évaluer l'impact de l'IA",
+                    "Nous avons un système complet de mesure de la valeur ajoutée de l'IA"
+                ]
+            },
+            {
+                question: "Quel est le niveau de collaboration entre les équipes IA et les autres départements ?",
+                answers: [
+                    "Il n'y a pas de collaboration spécifique autour de l'IA",
+                    "Collaboration ponctuelle sur des projets spécifiques",
+                    "Collaboration régulière et structurée",
+                    "Culture d'entreprise axée sur la collaboration IA transversale"
+                ]
+            },
+            {
+                question: "Comment gérez-vous l'innovation en matière d'IA ?",
+                answers: [
+                    "Nous n'avons pas de processus d'innovation en IA",
+                    "Nous suivons les tendances IA mais sans processus formel",
+                    "Nous avons un processus d'innovation IA avec des tests réguliers",
+                    "Nous sommes à la pointe de l'innovation IA dans notre secteur"
+                ]
+            },
+            {
+                question: "Quelle est votre approche en matière de formation et de sensibilisation à l'IA ?",
+                answers: [
+                    "Nous n'avons pas de formation spécifique à l'IA",
+                    "Quelques formations ponctuelles sur l'IA sont proposées",
+                    "Programme de formation IA structuré pour les employés clés",
+                    "Culture d'apprentissage continu en IA pour tous les employés"
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questionnaireDiv = document.getElementById('questionnaire');
+        const nextButton = document.getElementById('next');
+        const resultsDiv = document.getElementById('results');
+
+        function displayQuestion(index) {
+            questionnaireDiv.innerHTML = '';
+            const q = questions[index];
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question active';
+            questionDiv.innerHTML = `
+                <p>${index + 1}. ${q.question}</p>
+                ${q.answers.map((answer, i) => `
+                    <label>
+                        <input type="radio" name="q${index + 1}" value="${i}">
+                        ${answer}
+                    </label>
+                `).join('')}
+            `;
+            questionnaireDiv.appendChild(questionDiv);
+        }
+
+        function showNextQuestion() {
+            const selectedAnswer = document.querySelector(`input[name="q${currentQuestion + 1}"]:checked`);
+            
+            if (!selectedAnswer) {
+                alert("Veuillez sélectionner une réponse avant de continuer.");
+                return;
+            }
+
+            score += parseInt(selectedAnswer.value);
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                displayQuestion(currentQuestion);
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            questionnaireDiv.style.display = 'none';
+            nextButton.style.display = 'none';
+            resultsDiv.style.display = 'block';
+
+            const scoreDiv = document.getElementById('score');
+            const interpretationDiv = document.getElementById('interpretation');
+            const recommendationsDiv = document.getElementById('recommendations');
+
+            scoreDiv.textContent = `Votre score : ${score} / 30`;
+
+            let interpretation, recommendations;
+
+            if (score <= 7) {
+                interpretation = "Niveau débutant";
+                recommendations = "Concentrez-vous sur le développement d'une stratégie IA et la mise en œuvre de projets pilotes.";
+            } else if (score <= 15) {
+                interpretation = "Niveau intermédiaire";
+                recommendations = "Améliorez vos compétences et intégrez l'IA dans vos processus clés.";
+            } else if (score <= 23) {
+                interpretation = "Niveau avancé";
+                recommendations = "Poursuivez l'optimisation et l'innovation en matière d'IA.";
+            } else {
+                interpretation = "Niveau expert";
+                recommendations = "Maintenez votre avance et explorez les technologies émergentes en IA.";
+            }
+
+            interpretationDiv.textContent = `Interprétation : ${interpretation}`;
+            recommendationsDiv.innerHTML = `<h3>Recommandations :</h3><p>${recommendations}</p>`;
+        }
+
+        nextButton.addEventListener('click', showNextQuestion);
+
+        displayQuestion(0);
+    </script>
+</body>
+</html>
